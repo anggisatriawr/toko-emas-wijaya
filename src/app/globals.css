@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 47.9 95.8% 53.1%; /* Gold-like #fbbf24 */
+    --primary-foreground: 26 83.3% 14.1%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 47.9 95.8% 53.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body, html {
+    @apply bg-background text-foreground scroll-smooth;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* KHUSUS UNTUK CETAK (PRINT) */
+@media print {
+  @page {
+    /* Secara umum ukuran margin kecil agar Thermal POS masuk */
+    margin: 0.5cm;
+  }
+  
+  @page a4-report {
+    size: A4 portrait;
+    margin: 1.5cm;
+  }
+
+  /* Netralisir semua pergeseran layout (seperti margin sidebar) */
+  body, html, main, section {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+    width: 100% !important;
+    max-width: none !important;
+    transform: none !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Sembunyikan elemen UI Aplikasi */
+  aside, nav, header, button, form {
+    display: none !important;
+  }
+
+  /* Bungkus Luar Nota Struk (Thermal POS) */
+  .print-override {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    z-index: 99999 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Tampilan Kartu Nota Thermal POS */
+  #printable-receipt {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    max-width: 80mm !important; /* Disesuaikan untuk thermal 80mm */
+    margin: 0 !important; 
+    padding: 5mm !important; 
+    background: white !important;
+    color: black !important;
+    border-radius: 0 !important; 
+    font-size: 11px !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  #printable-receipt h2 {
+    font-size: 16px !important;
+  }
+
+  /* Sembunyikan gradient hiasan */
+  #printable-receipt .bg-gradient-to-r {
+    display: none !important;
+  }
+
+  /* LAPORAN A4 PROPOSIONAL (ABSENSI & TRANSAKSI BULANAN) */
+  #printable-monthly-report, #printable-attendance {
+    display: block !important;
+    width: 100% !important;
+    page: a4-report; /* Paksa pakai aturan kertas A4 */
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    line-height: 1.5 !important;
+    padding: 0 !important; 
+    margin: 0 auto !important;
+  }
+
+  #printable-monthly-report table, #printable-attendance table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin-bottom: 2rem !important;
+  }
+
+  #printable-monthly-report th, #printable-monthly-report td,
+  #printable-attendance th, #printable-attendance td {
+    padding: 8px 12px !important;
+    font-size: 11pt !important;
+    border: 1px solid #000 !important;
+  }
+
+  #printable-monthly-report h1, #printable-attendance h1 {
+    font-size: 20pt !important;
+    margin-bottom: 5px !important;
+  }
+  
+  #printable-monthly-report h2, #printable-attendance h2 {
+    font-size: 14pt !important;
+    margin-bottom: 15px !important;
+  }
+}
+

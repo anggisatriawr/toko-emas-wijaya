@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  password  String
+  name      String
+  role      String     @default("EMPLOYEE")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  attendances Attendance[]
+  transactions Transaction[]
+  buybacks    Buyback[]
+}
+
+model Attendance {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  date      DateTime @default(now()) 
+  clockIn   DateTime?
+  clockOut  DateTime?
+}
+
+model Inventory {
+  id         String     @id @default(uuid())
+  code       String     @unique
+  type       String     
+  karat      String     
+  weight     Float      
+  ongkos     Float      
+  status     String     @default("AVAILABLE")
+  imageUrl   String?
+  description String?   @db.Text
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  transaction_items Transaction[]
+  buyback_items     Buyback[]
+}
+
+model DailyPrice {
+  id           String   @id @default(uuid())
+  date         DateTime @unique @default(now())
+  sellPerGram  Float
+  buyPerGram   Float
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String   @unique
+  address   String   
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transactions Transaction[]
+  buybacks    Buyback[]
+}
+
+model Transaction {
+  id           String    @id @default(uuid())
+  invoice      String    @unique
+  customerId   String
+  customer     Customer  @relation(fields: [customerId], references: [id])
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  inventoryId  String    @unique
+  inventory    Inventory @relation(fields: [inventoryId], references: [id])
+  weight       Float
+  pricePerGram Float
+  ongkos       Float
+  totalPrice   Float
+  createdAt    DateTime  @default(now())
+  
+  buyback      Buyback?
+}
+
+model Buyback {
+  id             String      @id @default(uuid())
+  transactionId  String      @unique
+  transaction    Transaction @relation(fields: [transactionId], references: [id])
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  inventoryId    String      @unique
+  inventory      Inventory   @relation(fields: [inventoryId], references: [id])
+  actualWeight   Float
+  pricePerGram   Float
+  deduction      Float
+  totalBuyback   Float
+  createdAt      DateTime    @default(now())
+}
+
+model CatalogItem {
+  id        String   @id @default(uuid())
+  name      String
+  weight    String
+  price     Float
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
