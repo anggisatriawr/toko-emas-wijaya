@@ -35,16 +35,20 @@ export async function searchTransactionsByQuery(query: string) {
     return { success: false, error: "Data transaksi tidak ditemukan, atau barang (kuitansi) mungkin sudah pernah diserahkan kembali (Buyback) sebelumnya kepada Toko." };
   }
 
-  // Pre-calculate the potential buyback nominal for all returned transactions to simplify the client
-  const mappedResults = transactions.map(t => ({
-    ...t,
-    totalBuyback: t.weight * dailyPrice.buyPerGram
-  }));
+  const { getBuybackKaratMultiplier } = await import("@/lib/karat");
+  const mappedResults = transactions.map(t => {
+    const buyPerGram = Math.round(dailyPrice.buyPerGram * getBuybackKaratMultiplier(t.inventory.karat));
+    return {
+      ...t,
+      calculatedBuyPerGram: buyPerGram,
+      totalBuyback: t.weight * buyPerGram
+    };
+  });
 
   return {
     success: true,
     transactions: mappedResults,
-    buyPerGram: dailyPrice.buyPerGram
+    baseBuyPerGram: dailyPrice.buyPerGram
   };
 }
 
@@ -64,7 +68,10 @@ export async function processBuyback(transactionId: string, actualWeight: number
   const dailyPrice = await prisma.dailyPrice.findUnique({ where: { date: today } });
   if (!dailyPrice) throw new Error("Harga Emas (Beli) hari ini belum diatur oleh Admin.");
 
-  const grossBuyback = actualWeight * dailyPrice.buyPerGram;
+  const { getBuybackKaratMultiplier } = await import("@/lib/karat");
+  const buyPerGram = Math.round(dailyPrice.buyPerGram * getBuybackKaratMultiplier(transaction.inventory.karat));
+
+  const grossBuyback = actualWeight * buyPerGram;
   const totalBuyback = grossBuyback - damagePenalty;
   const deduction = transaction.totalPrice - totalBuyback; // Loss for customer
 
@@ -77,7 +84,7 @@ export async function processBuyback(transactionId: string, actualWeight: number
         userId: (session.user as any).id,
         inventoryId: transaction.inventoryId,
         actualWeight: actualWeight, 
-        pricePerGram: dailyPrice.buyPerGram,
+        pricePerGram: buyPerGram,
         deduction: deduction > 0 ? deduction : 0,
         totalBuyback: totalBuyback > 0 ? totalBuyback : 0,
       }

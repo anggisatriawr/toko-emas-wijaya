@@ -20,7 +20,8 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
 
   const damagePenalty = (damagePutus ? 25000 : 0) + (damageGores ? 10000 : 0) + (damagePermata ? 15000 : 0);
   const currentWeight = Number(actualWeight) || 0;
-  const clientTotalBuyback = (currentWeight * dailyHarga.buyPerGram) - damagePenalty;
+  const buybackPricePerGram = selectedResult?.calculatedBuyPerGram || dailyHarga.buyPerGram;
+  const clientTotalBuyback = (currentWeight * buybackPricePerGram) - damagePenalty;
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -170,8 +171,12 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
                    />
                  </div>
                  <div className="flex justify-between border-b border-purple-500/30 pb-2 mb-2 mt-2">
-                   <span className="text-muted-foreground">Estimasi Harga Beli / Susut HARI INI (/g)</span>
+                   <span className="text-muted-foreground">Harga Dasar Beli (24K)</span>
                    <span>Rp {dailyHarga.buyPerGram.toLocaleString("id-ID")}</span>
+                 </div>
+                 <div className="flex justify-between border-b border-purple-500/30 pb-2 mb-2 mt-2">
+                   <span className="text-muted-foreground">Harga Beli {selectedResult.inventory.karat} (/g)</span>
+                   <span className="font-bold text-white">Rp {buybackPricePerGram.toLocaleString("id-ID")}</span>
                  </div>
 
                  <div className="mt-4 border-b border-purple-500/30 pb-4">

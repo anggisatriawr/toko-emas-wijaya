@@ -24,7 +24,10 @@ export async function processTransaction(data: any) {
     
     if (!dailyPrice) throw new Error("Harga harian belum diatur oleh Admin");
 
-    const pricePerGram = dailyPrice.sellPerGram;
+    const { getSellKaratMultiplier } = await import("@/lib/karat");
+    const multiplier = getSellKaratMultiplier(item.karat);
+
+    const pricePerGram = Math.round(dailyPrice.sellPerGram * multiplier);
     const totalPrice = (item.weight * pricePerGram) + item.ongkos;
 
     // Create unique invoice

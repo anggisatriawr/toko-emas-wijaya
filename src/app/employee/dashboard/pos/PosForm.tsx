@@ -4,6 +4,8 @@ import { processTransaction } from "./actions";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, ChevronDown, Check, X } from "lucide-react";
 
+import { getSellKaratMultiplier } from "@/lib/karat";
+
 export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPrice: any }) {
   const [customer, setCustomer] = useState({ name: "", phone: "", address: "" });
   const [selectedItemId, setSelectedItemId] = useState("");
@@ -37,10 +39,15 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
     }
   }, [selectedItem, dropdownOpen]);
 
+  const pricePerGram = useMemo(() => {
+    if (!selectedItem) return 0;
+    return Math.round(dailyPrice.sellPerGram * getSellKaratMultiplier(selectedItem.karat));
+  }, [selectedItem, dailyPrice]);
+
   const totalPrice = useMemo(() => {
     if (!selectedItem) return 0;
-    return (selectedItem.weight * dailyPrice.sellPerGram) + selectedItem.ongkos;
-  }, [selectedItem, dailyPrice]);
+    return (selectedItem.weight * pricePerGram) + selectedItem.ongkos;
+  }, [selectedItem, pricePerGram]);
 
   const handleReset = () => {
     setCustomer({ name: "", phone: "", address: "" });
@@ -307,8 +314,12 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
             <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
               <h4 className="font-semibold text-primary mb-3">Rincian Perhitungan</h4>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-muted-foreground">Harga Jual per Gram</span>
+                <span className="text-muted-foreground">Harga Dasar (24K)</span>
                 <span>Rp {dailyPrice.sellPerGram.toLocaleString("id-ID")}</span>
+              </div>
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Harga per Gram ({selectedItem.karat})</span>
+                <span className="font-bold">Rp {pricePerGram.toLocaleString("id-ID")}</span>
               </div>
               <div className="flex justify-between text-sm mb-2">
                 <span className="text-muted-foreground">Berat Barang</span>

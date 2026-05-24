@@ -42,7 +42,7 @@ export function PriceClient({ current, history }: { current: any, history: any[]
       {/* Form Harga Hari Ini */}
       <div className="glass p-8 rounded-2xl border border-primary/20">
         <h3 className="font-bold text-xl mb-6 text-primary border-b border-primary/20 pb-4">
-          Atur Harga Emas (Per Gram) Untuk Hari Ini
+          Atur Harga Sekarang
         </h3>
         
         {error && <div className="bg-red-500/20 text-red-200 p-3 rounded-lg mb-4">{error}</div>}
