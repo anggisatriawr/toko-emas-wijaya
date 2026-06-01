@@ -24,14 +24,28 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found or inactive");
         }
 
-        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
+        const inputPassword = credentials.password?.trim();
+
+        if (!inputPassword) {
+          throw new Error("Password cannot be empty");
+        }
+
+        let isPasswordValid = false;
+
+        // Check if the password in DB is a bcrypt hash
+        if (user.password.startsWith("$2a$") || user.password.startsWith("$2b$")) {
+          isPasswordValid = bcrypt.compareSync(inputPassword, user.password);
+        } else {
+          // Fallback for unhashed seeds
+          isPasswordValid = inputPassword === user.password;
+        }
 
         if (!isPasswordValid) {
-           // For development/seeding purposes
-           if(credentials.password === "admin123" && user.role === "ADMIN") {
+           // For development/seeding purposes fallback
+           if(inputPassword === "admin123" && user.role === "ADMIN") {
              return { id: user.id, name: user.name, role: user.role };
            }
-           if (credentials.password === "pegawai123" && user.role === "EMPLOYEE") {
+           if (inputPassword === "pegawai123" && user.role === "EMPLOYEE") {
              return { id: user.id, name: user.name, role: user.role };
            }
            throw new Error("Invalid password");
