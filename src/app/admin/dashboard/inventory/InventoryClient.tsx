@@ -379,7 +379,7 @@ export function InventoryClient({ items }: { items: any[] }) {
                 {selectedItem.imageUrl ? (
                   <div className="w-full h-64 bg-black/40 rounded-xl overflow-hidden border border-white/10 mb-4 flex-shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={selectedItem.imageUrl} alt="Foto Emas" className="w-full h-full object-contain" />
+                    <img src={selectedItem.imageUrl} alt="Foto Emas" className="w-full h-full object-cover" />
                   </div>
                 ) : (
                   <div className="w-full h-64 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center text-muted-foreground mb-4 flex-shrink-0">
