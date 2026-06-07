@@ -15,10 +15,10 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
 
   const [actualWeight, setActualWeight] = useState<number | "">("");
   const [damagePutus, setDamagePutus] = useState(false);
-  const [damageGores, setDamageGores] = useState(false);
+  const [damageBengkok, setDamageBengkok] = useState(false);
   const [damagePermata, setDamagePermata] = useState(false);
 
-  const damagePenalty = (damagePutus ? 25000 : 0) + (damageGores ? 10000 : 0) + (damagePermata ? 15000 : 0);
+  const damagePenalty = (damagePutus ? 25000 : 0) + (damageBengkok ? 10000 : 0) + (damagePermata ? 15000 : 0);
   const currentWeight = Number(actualWeight) || 0;
   const buybackPricePerGram = selectedResult?.calculatedBuyPerGram || dailyHarga.buyPerGram;
   const clientTotalBuyback = (currentWeight * buybackPricePerGram) - damagePenalty;
@@ -106,7 +106,7 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
                     setSelectedResult(t);
                     setActualWeight(t.weight);
                     setDamagePutus(false);
-                    setDamageGores(false);
+                    setDamageBengkok(false);
                     setDamagePermata(false);
                 }} className="bg-white/5 border border-white/10 hover:border-primary/50 rounded-xl p-4 cursor-pointer transition-colors flex justify-between items-center group">
                   <div>
@@ -160,6 +160,9 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
                    <span className="text-muted-foreground">Harga Jual Awal (Riwayat Modal Kita)</span>
                    <span>Rp {selectedResult.totalPrice.toLocaleString("id-ID")}</span>
                  </div>
+                 <div className="text-xs text-muted-foreground/60 text-right mt-1 mb-2">
+                   ({selectedResult.weight}g &times; Rp {selectedResult.pricePerGram.toLocaleString("id-ID")}) + Ongkos Rp {selectedResult.ongkos.toLocaleString("id-ID")}
+                 </div>
                  <div className="flex justify-between items-center bg-black/20 p-2 rounded-lg border border-white/5 mt-2">
                    <span className="text-muted-foreground font-semibold">Berat Aktual (g)</span>
                    <input 
@@ -191,10 +194,10 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
                      </label>
                      <label className="flex items-center justify-between cursor-pointer group p-2 rounded-lg hover:bg-white/5 transition-colors">
                        <div className="flex items-center gap-3">
-                         <input type="checkbox" checked={damageGores} onChange={(e) => setDamageGores(e.target.checked)} className="w-4 h-4 accent-purple-500 cursor-pointer" />
-                         <span className={damageGores ? "text-purple-300 font-bold" : "text-gray-300 group-hover:text-white transition-colors"}>Barang Gores</span>
+                         <input type="checkbox" checked={damageBengkok} onChange={(e) => setDamageBengkok(e.target.checked)} className="w-4 h-4 accent-purple-500 cursor-pointer" />
+                         <span className={damageBengkok ? "text-purple-300 font-bold" : "text-gray-300 group-hover:text-white transition-colors"}>Barang Bengkok</span>
                        </div>
-                       <span className={damageGores ? "text-red-400 font-bold" : "text-muted-foreground"}>-Rp 10.000</span>
+                       <span className={damageBengkok ? "text-red-400 font-bold" : "text-muted-foreground"}>-Rp 10.000</span>
                      </label>
                      <label className="flex items-center justify-between cursor-pointer group p-2 rounded-lg hover:bg-white/5 transition-colors">
                        <div className="flex items-center gap-3">
