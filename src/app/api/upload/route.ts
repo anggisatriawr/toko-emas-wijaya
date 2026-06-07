@@ -28,22 +28,9 @@ export async function POST(req: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    // Membuat nama unik menggunakan timestamp agar tidak bentrok
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filename = `${Date.now()}-${originalName}`;
-    const uploadDir = join(process.cwd(), "public/uploads");
+    const mimeType = file.type || "image/jpeg";
     
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch(e) {
-      // ignore if exists
-    }
-
-    const path = join(uploadDir, filename);
-    await writeFile(path, buffer);
-
-    const imageUrl = `/uploads/${filename}`;
+    const imageUrl = `data:${mimeType};base64,${buffer.toString("base64")}`;
 
     const item = await prisma.catalogItem.create({
       data: {
