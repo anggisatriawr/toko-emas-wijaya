@@ -156,12 +156,11 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
              </div>
 
               <div className="space-y-2 text-sm flex-1">
-                 <div className="flex justify-between">
-                   <span className="text-muted-foreground">Harga Jual Awal (Riwayat Modal Kita)</span>
-                   <span>Rp {selectedResult.totalPrice.toLocaleString("id-ID")}</span>
-                 </div>
-                 <div className="text-xs text-muted-foreground/60 text-right mt-1 mb-2">
-                   ({selectedResult.weight}g &times; Rp {selectedResult.pricePerGram.toLocaleString("id-ID")}) + Ongkos Rp {selectedResult.ongkos.toLocaleString("id-ID")}
+                 <div className="flex justify-between items-center pb-2">
+                   <span className="text-muted-foreground">Harga Jual Awal</span>
+                   <span className="text-sm font-medium text-white">
+                     ({selectedResult.weight}g &times; Rp {selectedResult.pricePerGram.toLocaleString("id-ID")}) + Ongkos Rp {selectedResult.ongkos.toLocaleString("id-ID")}
+                   </span>
                  </div>
                  <div className="flex justify-between items-center bg-black/20 p-2 rounded-lg border border-white/5 mt-2">
                    <span className="text-muted-foreground font-semibold">Berat Aktual (g)</span>
