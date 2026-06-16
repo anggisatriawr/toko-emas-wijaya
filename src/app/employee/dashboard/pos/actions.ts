@@ -11,7 +11,7 @@ export async function processTransaction(data: any) {
     return { success: false, error: "Unauthorized" };
   }
 
-  const { customerName, customerPhone, customerAddress, inventoryId } = data;
+  const { customerName, customerPhone, customerAddress, inventoryId, potongan } = data;
 
   try {
     // Check inventory and current price
@@ -53,6 +53,7 @@ export async function processTransaction(data: any) {
           weight: item.weight,
           pricePerGram: pricePerGram,
           ongkos: item.ongkos,
+          potongan: potongan || 0,
           totalPrice: totalPrice,
         }
       });

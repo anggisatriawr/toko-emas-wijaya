@@ -8,6 +8,7 @@ import { getSellKaratMultiplier } from "@/lib/karat";
 
 export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPrice: any }) {
   const [customer, setCustomer] = useState({ name: "", phone: "", address: "" });
+  const [potongan, setPotongan] = useState<number | "">("");
   const [selectedItemId, setSelectedItemId] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -51,6 +52,7 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
 
   const handleReset = () => {
     setCustomer({ name: "", phone: "", address: "" });
+    setPotongan("");
     setSelectedItemId("");
     setSearchTerm("");
     setStatus("idle");
@@ -73,7 +75,8 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
         customerName: customer.name,
         customerPhone: customer.phone,
         customerAddress: customer.address,
-        inventoryId: selectedItemId
+        inventoryId: selectedItemId,
+        potongan: Number(potongan) || 0
       });
 
       if (result.success) {
@@ -157,6 +160,12 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
                <span>Ongkos Pembuatan:</span>
                <span>Rp {transaction.ongkos.toLocaleString("id-ID")}</span>
             </div>
+            {transaction.potongan > 0 && (
+              <div className="flex justify-between text-gray-600 border-t border-gray-200 mt-2 pt-2">
+                 <span>Potongan Buyback / Gram:</span>
+                 <span className="text-red-500">-Rp {transaction.potongan.toLocaleString("id-ID")}</span>
+              </div>
+            )}
           </div>
 
           <div className="border-b-2 border-dashed border-gray-400 mb-4"></div>
@@ -212,6 +221,12 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
           <textarea required className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-1 focus:ring-primary"
             value={customer.address} onChange={(e) => setCustomer({...customer, address: e.target.value})}
             placeholder="Jl. Merdeka No 1" rows={3}></textarea>
+        </div>
+        <div>
+          <label className="text-sm text-muted-foreground mb-1 block text-red-400">Potongan per Gram (Kesepakatan Buyback)</label>
+          <input required type="number" step="100" className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-1 focus:ring-red-500"
+            value={potongan} onChange={(e) => setPotongan(e.target.value === "" ? "" : Number(e.target.value))}
+            placeholder="Contoh: 50000" />
         </div>
       </div>
 

@@ -156,12 +156,20 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
              </div>
 
               <div className="space-y-2 text-sm flex-1">
-                 <div className="flex justify-between items-center pb-2">
-                   <span className="text-muted-foreground">Harga Jual Awal</span>
+                 <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                   <span className="text-muted-foreground">Harga Jual Awal (Nota)</span>
                    <span className="text-sm font-medium text-white">
                      Rp {selectedResult.totalPrice.toLocaleString("id-ID")}
                    </span>
                  </div>
+                 {selectedResult.potongan > 0 && (
+                 <div className="flex justify-between items-center pb-2 border-b border-white/5 mt-2">
+                   <span className="text-muted-foreground">Kesepakatan Potongan Buyback</span>
+                   <span className="text-sm font-medium text-red-400">
+                     -Rp {selectedResult.potongan.toLocaleString("id-ID")} / Gram
+                   </span>
+                 </div>
+                 )}
                  <div className="flex justify-between items-center bg-black/20 p-2 rounded-lg border border-white/5 mt-2">
                    <span className="text-muted-foreground font-semibold">Berat Aktual (g)</span>
                    <input 
@@ -176,10 +184,22 @@ export function BuybackClient({ dailyHarga }: { dailyHarga: any }) {
                    <span className="text-muted-foreground">Harga Emas Terkini (24K)</span>
                    <span>Rp {dailyHarga.sellPerGram.toLocaleString("id-ID")}</span>
                  </div>
-                 <div className="flex justify-between border-b border-purple-500/30 pb-2 mb-2 mt-2">
-                   <span className="text-muted-foreground">Harga Beli {selectedResult.inventory.karat} (/g)</span>
-                   <span className="font-bold text-white">Rp {buybackPricePerGram.toLocaleString("id-ID")}</span>
-                 </div>
+
+                 {selectedResult.isGaransi ? (
+                   <div className="bg-orange-500/20 border border-orange-500/50 rounded-lg p-3 mt-2 mb-4">
+                     <p className="text-orange-300 text-xs font-bold mb-2">PENGGUNAAN HARGA GARANSI</p>
+                     <p className="text-xs text-white/80 mb-2">Harga buyback normal (Rp {selectedResult.buyPerGramNormal.toLocaleString("id-ID")}/g) lebih rendah dari harga awal pembelian. Sistem otomatis menggunakan harga potongan garansi (Rp {selectedResult.potongan.toLocaleString("id-ID")}/g).</p>
+                     <div className="flex justify-between text-sm">
+                       <span className="text-orange-200">Harga Buyback Garansi per Gram</span>
+                       <span className="font-bold text-white">Rp {buybackPricePerGram.toLocaleString("id-ID")}</span>
+                     </div>
+                   </div>
+                 ) : (
+                   <div className="flex justify-between border-b border-purple-500/30 pb-2 mb-2 mt-2">
+                     <span className="text-muted-foreground">Harga Beli Normal {selectedResult.inventory.karat} (/g)</span>
+                     <span className="font-bold text-white">Rp {buybackPricePerGram.toLocaleString("id-ID")}</span>
+                   </div>
+                 )}
 
                  <div className="mt-4 border-b border-purple-500/30 pb-4">
                    <p className="text-xs font-bold text-purple-300 uppercase tracking-widest mb-3">Kondisi Barang (Kerusakan)</p>

@@ -82,6 +82,7 @@ model Transaction {
   weight       Float
   pricePerGram Float
   ongkos       Float
+  potongan     Float      @default(0)
   totalPrice   Float
   createdAt    DateTime  @default(now())
   

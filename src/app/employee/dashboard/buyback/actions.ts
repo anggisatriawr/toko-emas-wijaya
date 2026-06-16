@@ -37,11 +37,23 @@ export async function searchTransactionsByQuery(query: string) {
 
   const { getBuybackKaratMultiplier } = await import("@/lib/karat");
   const mappedResults = transactions.map(t => {
-    const buyPerGram = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(t.inventory.karat));
+    const buyPerGramNormal = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(t.inventory.karat));
+    const totalBuybackNormal = t.weight * buyPerGramNormal;
+
+    const garansiPerGram = (t.totalPrice / t.weight) - t.potongan;
+    const totalBuybackGaransi = t.weight * garansiPerGram;
+
+    const isGaransi = totalBuybackGaransi > totalBuybackNormal;
+    const finalTotalBuyback = isGaransi ? totalBuybackGaransi : totalBuybackNormal;
+    const finalBuyPerGram = isGaransi ? garansiPerGram : buyPerGramNormal;
+
     return {
       ...t,
-      calculatedBuyPerGram: buyPerGram,
-      totalBuyback: t.weight * buyPerGram
+      calculatedBuyPerGram: finalBuyPerGram,
+      totalBuyback: finalTotalBuyback,
+      isGaransi,
+      garansiPerGram,
+      buyPerGramNormal
     };
   });
 
@@ -69,9 +81,14 @@ export async function processBuyback(transactionId: string, actualWeight: number
   if (!dailyPrice) throw new Error("Harga Emas Terkini hari ini belum diatur oleh Admin.");
 
   const { getBuybackKaratMultiplier } = await import("@/lib/karat");
-  const buyPerGram = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(transaction.inventory.karat));
+  const buyPerGramNormal = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(transaction.inventory.karat));
+  
+  const garansiPerGram = (transaction.totalPrice / transaction.weight) - transaction.potongan;
+  const isGaransi = garansiPerGram > buyPerGramNormal;
 
-  const grossBuyback = actualWeight * buyPerGram;
+  const finalBuyPerGram = isGaransi ? garansiPerGram : buyPerGramNormal;
+
+  const grossBuyback = actualWeight * finalBuyPerGram;
   const totalBuyback = grossBuyback - damagePenalty;
   const deduction = transaction.totalPrice - totalBuyback; // Loss for customer
 
@@ -84,7 +101,7 @@ export async function processBuyback(transactionId: string, actualWeight: number
         userId: (session.user as any).id,
         inventoryId: transaction.inventoryId,
         actualWeight: actualWeight, 
-        pricePerGram: buyPerGram,
+        pricePerGram: finalBuyPerGram,
         deduction: deduction > 0 ? deduction : 0,
         totalBuyback: totalBuyback > 0 ? totalBuyback : 0,
       }
