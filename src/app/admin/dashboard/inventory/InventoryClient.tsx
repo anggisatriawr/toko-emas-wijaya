@@ -41,7 +41,6 @@ export function InventoryClient({ items }: { items: any[] }) {
         if (editData.karat) formData.append("karat", editData.karat);
         if (editData.weight !== undefined) formData.append("weight", editData.weight.toString());
         if (editData.ongkos !== undefined) formData.append("ongkos", editData.ongkos.toString());
-        if (editData.potongan !== undefined) formData.append("potongan", editData.potongan.toString());
         if (editData.status) formData.append("status", editData.status);
         if (editData.description !== undefined) formData.append("description", editData.description);
         if (editData.image) formData.append("image", editData.image);
@@ -118,7 +117,7 @@ export function InventoryClient({ items }: { items: any[] }) {
             <button type="button" onClick={() => setIsAdding(false)} className="text-muted-foreground hover:text-white bg-white/5 p-2 rounded-lg transition-colors"><X size={20} /></button>
           </div>
           {error && <p className="text-red-400 text-sm bg-red-500/10 p-3 rounded-lg border border-red-500/20">{error}</p>}
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
              <div>
                <label className="text-xs text-muted-foreground mb-1 block">Kode Unik (ex: CIN-001)</label>
                <input name="code" required type="text" className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-white focus:border-primary focus:outline-none" />
@@ -152,10 +151,6 @@ export function InventoryClient({ items }: { items: any[] }) {
              <div>
                <label className="text-xs text-muted-foreground mb-1 block">Ongkos Pembuatan (Rp)</label>
                <input name="ongkos" required type="number" step="1000" className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-white focus:border-primary focus:outline-none" />
-             </div>
-             <div>
-               <label className="text-xs text-muted-foreground mb-1 block">Potongan per Gr (Rp)</label>
-               <input name="potongan" type="number" step="100" defaultValue="0" className="w-full bg-black/40 border border-white/10 rounded-lg p-2.5 text-white focus:border-primary focus:outline-none" />
              </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -227,7 +222,7 @@ export function InventoryClient({ items }: { items: any[] }) {
                                   <th className="p-4 font-medium text-white/50 w-32">KODE</th>
                                   <th className="p-4 font-medium text-white/50">Detail Barang</th>
                                   <th className="p-4 font-medium text-white/50 text-right">Berat (g)</th>
-                                  <th className="p-4 font-medium text-white/50 text-right">Ongkos / Pot.</th>
+                                  <th className="p-4 font-medium text-white/50 text-right">Ongkos</th>
                                   <th className="p-4 font-medium text-white/50 text-center">Status</th>
                                   <th className="p-4 font-medium text-white/50 text-right">Aksi</th>
                                 </tr>
@@ -302,29 +297,15 @@ export function InventoryClient({ items }: { items: any[] }) {
                                     </td>
                                     <td className="p-4 text-right text-gray-300">
                                       {editingId === item.id ? (
-                                        <div className="flex flex-col gap-2 items-end">
-                                          <input
-                                            type="number"
-                                            step="1000"
-                                            value={editData?.ongkos !== undefined ? editData.ongkos : item.ongkos}
-                                            onChange={(e) => setEditData({ ...editData, ongkos: e.target.value })}
-                                            className="bg-black/80 border border-primary/50 text-primary rounded p-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary w-24 text-right"
-                                            title="Ongkos"
-                                          />
-                                          <input
-                                            type="number"
-                                            step="100"
-                                            value={editData?.potongan !== undefined ? editData.potongan : item.potongan}
-                                            onChange={(e) => setEditData({ ...editData, potongan: e.target.value })}
-                                            className="bg-black/80 border border-red-500/50 text-red-400 rounded p-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-red-500 w-24 text-right"
-                                            title="Potongan"
-                                          />
-                                        </div>
+                                        <input
+                                          type="number"
+                                          step="1000"
+                                          value={editData?.ongkos !== undefined ? editData.ongkos : item.ongkos}
+                                          onChange={(e) => setEditData({ ...editData, ongkos: e.target.value })}
+                                          className="bg-black/80 border border-primary/50 text-primary rounded p-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary w-24 text-right"
+                                        />
                                       ) : (
-                                        <div className="flex flex-col gap-1 items-end">
-                                          <span>Rp {item.ongkos.toLocaleString("id-ID")}</span>
-                                          {item.potongan > 0 && <span className="text-xs text-red-400">-Rp {item.potongan.toLocaleString("id-ID")}</span>}
-                                        </div>
+                                        `Rp ${item.ongkos.toLocaleString("id-ID")}`
                                       )}
                                     </td>
                                     <td className="p-4 text-center">
@@ -356,7 +337,7 @@ export function InventoryClient({ items }: { items: any[] }) {
                                           handleSaveItem(item.id);
                                         } else {
                                           setEditingId(item.id);
-                                          setEditData({ type: item.type, karat: item.karat, weight: item.weight, ongkos: item.ongkos, potongan: item.potongan, status: item.status });
+                                          setEditData({ type: item.type, karat: item.karat, weight: item.weight, ongkos: item.ongkos, status: item.status });
                                         }
                                       }} className={`p-2 rounded-lg transition-colors border ${editingId === item.id ? 'bg-primary/20 text-primary border-primary/50' : 'bg-white/5 text-white hover:bg-white/10 border-transparent'}`} title={editingId === item.id ? "Simpan Perubahan" : "Edit Barang"}>
                                         <Save size={16} />
@@ -434,10 +415,6 @@ export function InventoryClient({ items }: { items: any[] }) {
                 <div className="flex justify-between items-center border-b border-white/5 pb-3">
                   <span className="text-muted-foreground text-sm">Ongkos Pembuatan</span>
                   <span className="font-mono text-gray-300">Rp {selectedItem.ongkos.toLocaleString("id-ID")}</span>
-                </div>
-                <div className="flex justify-between items-center border-b border-white/5 pb-3">
-                  <span className="text-muted-foreground text-sm">Potongan per Gram</span>
-                  <span className="font-mono text-red-400">Rp {selectedItem.potongan?.toLocaleString("id-ID") || 0}</span>
                 </div>
                 <div className="flex justify-between items-center border-b border-white/5 pb-3">
                   <span className="text-muted-foreground text-sm">Status Saat Ini</span>

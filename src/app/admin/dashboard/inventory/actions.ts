@@ -25,7 +25,6 @@ export async function createInventoryItem(data: FormData) {
   const karat = data.get("karat") as string;
   const weight = parseFloat(data.get("weight") as string);
   const ongkos = parseFloat(data.get("ongkos") as string);
-  const potongan = parseFloat(data.get("potongan") as string) || 0;
   const description = data.get("description") as string | null;
   const file = data.get("image") as File | null;
 
@@ -38,7 +37,7 @@ export async function createInventoryItem(data: FormData) {
 
   await prisma.inventory.create({
     data: {
-      code, type, karat, weight, ongkos, potongan, status: "AVAILABLE", description, imageUrl
+      code, type, karat, weight, ongkos, status: "AVAILABLE", description, imageUrl
     }
   });
 
@@ -69,11 +68,6 @@ export async function updateInventoryItem(data: FormData) {
 
   const ongkosStr = data.get("ongkos") as string;
   if (ongkosStr) payload.ongkos = parseFloat(ongkosStr);
-
-  const potonganStr = data.get("potongan") as string;
-  if (potonganStr !== null && potonganStr !== undefined && potonganStr !== "") {
-    payload.potongan = parseFloat(potonganStr);
-  }
 
   const description = data.get("description") as string | null;
   if (description !== null) payload.description = description;
