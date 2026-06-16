@@ -38,6 +38,7 @@ model Inventory {
   karat      String     
   weight     Float      
   ongkos     Float      
+  potongan   Float      @default(0)
   status     String     @default("AVAILABLE")
   imageUrl   String?    @db.LongText
   description String?   @db.Text
