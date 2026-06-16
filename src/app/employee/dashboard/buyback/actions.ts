@@ -9,7 +9,7 @@ export async function searchTransactionsByQuery(query: string) {
   today.setHours(0,0,0,0);
   const dailyPrice = await prisma.dailyPrice.findUnique({ where: { date: today } });
   
-  if (!dailyPrice) return { success: false, error: "Harga Emas (Beli) hari ini belum diatur oleh Admin." };
+  if (!dailyPrice) return { success: false, error: "Harga Emas Terkini hari ini belum diatur oleh Admin." };
 
   // Search by multiple fields using OR
   const transactions = await prisma.transaction.findMany({
@@ -37,7 +37,7 @@ export async function searchTransactionsByQuery(query: string) {
 
   const { getBuybackKaratMultiplier } = await import("@/lib/karat");
   const mappedResults = transactions.map(t => {
-    const buyPerGram = Math.round(dailyPrice.buyPerGram * getBuybackKaratMultiplier(t.inventory.karat));
+    const buyPerGram = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(t.inventory.karat));
     return {
       ...t,
       calculatedBuyPerGram: buyPerGram,
@@ -48,7 +48,7 @@ export async function searchTransactionsByQuery(query: string) {
   return {
     success: true,
     transactions: mappedResults,
-    baseBuyPerGram: dailyPrice.buyPerGram
+    baseBuyPerGram: dailyPrice.sellPerGram
   };
 }
 
@@ -66,10 +66,10 @@ export async function processBuyback(transactionId: string, actualWeight: number
   const today = new Date();
   today.setHours(0,0,0,0);
   const dailyPrice = await prisma.dailyPrice.findUnique({ where: { date: today } });
-  if (!dailyPrice) throw new Error("Harga Emas (Beli) hari ini belum diatur oleh Admin.");
+  if (!dailyPrice) throw new Error("Harga Emas Terkini hari ini belum diatur oleh Admin.");
 
   const { getBuybackKaratMultiplier } = await import("@/lib/karat");
-  const buyPerGram = Math.round(dailyPrice.buyPerGram * getBuybackKaratMultiplier(transaction.inventory.karat));
+  const buyPerGram = Math.round(dailyPrice.sellPerGram * getBuybackKaratMultiplier(transaction.inventory.karat));
 
   const grossBuyback = actualWeight * buyPerGram;
   const totalBuyback = grossBuyback - damagePenalty;

@@ -10,7 +10,7 @@ export default async function BuybackPage() {
     return (
       <div className="bg-red-500/20 text-red-100 p-6 rounded-2xl glass border border-red-500/30">
         <h2 className="text-xl font-bold">Akses Fitur Buyback Tertutup</h2>
-        <p className="mt-2 text-red-200">Admin belum mengatur **Harga Beli Nasional** untuk hari ini. Silakan hubungi admin sebelum memproses pembelian kembali barang pelanggan.</p>
+        <p className="mt-2 text-red-200">Admin belum mengatur **Harga Emas Terkini** untuk hari ini. Silakan hubungi admin sebelum memproses pembelian kembali barang pelanggan.</p>
       </div>
     );
   }
