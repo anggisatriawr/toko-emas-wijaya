@@ -11,7 +11,7 @@ export async function processTransaction(data: any) {
     return { success: false, error: "Unauthorized" };
   }
 
-  const { customerName, customerPhone, customerAddress, inventoryId, potongan } = data;
+  const { customerName, customerPhone, customerAddress, inventoryId, potongan, transactionDate } = data;
 
   try {
     // Check inventory and current price
@@ -43,6 +43,8 @@ export async function processTransaction(data: any) {
         });
       }
 
+      const txDate = transactionDate ? new Date(transactionDate) : new Date();
+
       // Record trans
       const trans = await tx.transaction.create({
         data: {
@@ -55,6 +57,7 @@ export async function processTransaction(data: any) {
           ongkos: item.ongkos,
           potongan: potongan || 0,
           totalPrice: totalPrice,
+          createdAt: txDate,
         }
       });
 
