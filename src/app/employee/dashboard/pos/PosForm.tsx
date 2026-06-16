@@ -8,7 +8,6 @@ import { getSellKaratMultiplier } from "@/lib/karat";
 
 export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPrice: any }) {
   const [customer, setCustomer] = useState({ name: "", phone: "", address: "" });
-  const [transactionDate, setTransactionDate] = useState("");
   const [potongan, setPotongan] = useState<number | "">("");
   const [selectedItemId, setSelectedItemId] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -53,7 +52,6 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
 
   const handleReset = () => {
     setCustomer({ name: "", phone: "", address: "" });
-    setTransactionDate("");
     setPotongan("");
     setSelectedItemId("");
     setSearchTerm("");
@@ -78,8 +76,7 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
         customerPhone: customer.phone,
         customerAddress: customer.address,
         inventoryId: selectedItemId,
-        potongan: Number(potongan) || 0,
-        transactionDate: transactionDate ? new Date(transactionDate).toISOString() : undefined
+        potongan: Number(potongan) || 0
       });
 
       if (result.success) {
@@ -218,12 +215,6 @@ export function PosForm({ inventory, dailyPrice }: { inventory: any[], dailyPric
           <input required type="text" className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-1 focus:ring-primary"
             value={customer.phone} onChange={(e) => setCustomer({...customer, phone: e.target.value})}
             placeholder="08123456789" />
-        </div>
-        <div>
-          <label className="text-sm text-muted-foreground mb-1 block">Tanggal Transaksi (Opsional)</label>
-          <input type="datetime-local" className="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-1 focus:ring-primary"
-            value={transactionDate} onChange={(e) => setTransactionDate(e.target.value)} />
-          <p className="text-xs text-muted-foreground mt-1">Kosongkan untuk menggunakan tanggal & waktu saat ini.</p>
         </div>
         <div>
           <label className="text-sm text-muted-foreground mb-1 block">Alamat</label>
