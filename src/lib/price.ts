@@ -20,7 +20,7 @@ export async function getOrSyncDailyPrice() {
 
       if (data.success && data.rates && data.rates.IDR) {
         const pricePerOunce = data.rates.IDR;
-        const basePricePerGram = (pricePerOunce / TROY_OUNCE_TO_GRAM) + 100000; // Tambah paten 100rb
+        const basePricePerGram = (pricePerOunce / TROY_OUNCE_TO_GRAM) + 95000; // Tambah paten 95rb
 
         // Spread/Margin
         // Harga Jual (Pelanggan beli): Base price + 3%
