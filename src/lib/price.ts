@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 
-const API_KEY = "0065931c-a8c6-4719-af5f-0f45a00375b9";
+const API_KEY = "58ce25a6a0b15caabdd8928418bed91e";
 const TROY_OUNCE_TO_GRAM = 31.1034768;
 
 export async function getOrSyncDailyPrice() {
