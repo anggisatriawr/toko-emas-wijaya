@@ -1,7 +1,6 @@
 import { prisma } from "./prisma";
 
-const API_KEY = "0065931c-a8c6-4719-af5f-0f45a00375b9";
-const TROY_OUNCE_TO_GRAM = 31.1034768;
+const API_KEY = "740a2b04-e8c4-40e8-b176-3491523ec5b2";
 
 export async function getOrSyncDailyPrice() {
   const today = new Date();
@@ -11,22 +10,24 @@ export async function getOrSyncDailyPrice() {
 
   if (!price) {
     try {
-      // Sync from MetalpriceAPI
+      // Sync from Emas API ID
       const res = await fetch(
-        `https://api.metalpriceapi.com/v1/latest?api_key=${API_KEY}&base=XAU&currencies=IDR`,
-        { cache: "no-store" }
+        `https://emas.maulanar.my.id/api/prices?brand[eq]=antam&weight[eq]=1&limit=1&sort_by=updated_at&order=desc`,
+        {
+          headers: {
+            "X-API-Key": API_KEY,
+          },
+          cache: "no-store",
+        }
       );
       const data = await res.json();
 
-      if (data.success && data.rates && data.rates.IDR) {
-        const pricePerOunce = data.rates.IDR;
-        const basePricePerGram = pricePerOunce / TROY_OUNCE_TO_GRAM;
-
-        // Spread/Margin
-        // Harga Jual (Pelanggan beli): Base price + 3%
-        // Harga Beli/Buyback (Toko beli dari pelanggan): Base price - 3%
-        const sell = Math.round(basePricePerGram * 1.03);
-        const buy = Math.round(basePricePerGram * 0.97);
+      if (data.status === "success" && data.data && data.data.length > 0) {
+        const goldData = data.data[0];
+        
+        // Harga Jual dan Beli/Buyback langsung dari API
+        const sell = goldData.sell_price;
+        const buy = goldData.buyback_price;
 
         price = await prisma.dailyPrice.create({
           data: {
@@ -35,6 +36,8 @@ export async function getOrSyncDailyPrice() {
             buyPerGram: buy,
           },
         });
+      } else {
+        console.error("Failed to sync gold price from API: Invalid data format", data);
       }
     } catch (error) {
       console.error("Failed to sync gold price from API:", error);
