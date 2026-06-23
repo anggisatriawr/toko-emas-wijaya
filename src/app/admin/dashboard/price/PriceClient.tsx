@@ -14,7 +14,7 @@ export function PriceClient({ current, history }: { current: any, history: any[]
     setError("");
     try {
       await syncDailyPriceAction();
-      alert("Harga berhasil disinkronisasi dengan API Metalprice!");
+      alert("Harga berhasil disinkronisasi dengan GoldAPI!");
     } catch (err: any) {
       setError(err.message);
     } finally {
